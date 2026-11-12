@@ -52,17 +52,29 @@ checked by the code.
 - **Voice and text.** Voice is closer to the phone call it replaces and lets us hear the candidate's English.
   Text is always available (no microphone, noisy place, personal preference).
 
-## Tech
+## Technical choices
 
-| Part | Tool |
-|---|---|
-| API | Python, Flask, SQLAlchemy, Pydantic |
-| Interface | Next.js, React, TypeScript, Tailwind |
-| Database | SQLite (one file) |
-| AI | Claude Sonnet for judging, Claude Haiku for simple tasks (cheaper) |
-| Voice interview | ElevenLabs |
-| E-mail | SMTP (Gmail) |
-| Hosting | One Docker image on Modal |
+| Part | Choice | Why |
+|---|---|---|
+| API | **Flask** | Simple and explicit: one file per area (offers, candidates, e-mails, costs). Runs behind gunicorn. |
+| Validation | **Pydantic** | The same tool checks what the browser sends and forces the AI to answer in a fixed shape. |
+| Database access | **SQLAlchemy** | The code does not depend on the database: changing it means changing one address. |
+| Database | **SQLite** | Nothing to install, everything in one file, the whole app starts with one command. The slow part is the AI calls, not the database. |
+| Background work | **Thread pool** | A CV takes 5 to 40 seconds to analyse. The page answers at once and the analysis runs after, 4 CVs at a time. |
+| Interface | **Next.js** and **React** | One layout protects every recruiter page, while candidate pages (`/i/<link>`) need no account. Next.js also forwards `/api` to Flask, so the browser talks to a single address and the login cookie just works. |
+| Types and style | **TypeScript** and **Tailwind** | The build stops on a type error. Colours are defined once. |
+| Judging | **Claude Sonnet** | Evaluating a CV, writing the interview questions and grading the interview need judgement. |
+| Simple tasks | **Claude Haiku** | Profile extraction, cheating detection, written interview, e-mails. About 20 times cheaper than Sonnet. |
+| AI answers | **Structured outputs** | The model answers in a schema, not free text, and each verdict can only be one of four values. |
+| Anonymization, quote check, score | **Plain code** | Free, same result every time, easy to test. No model involved. |
+| Voice interview | **ElevenLabs** | It handles listening, turn-taking and speech. Building that live audio chain was not the point of the project. |
+| Voice connection | **WebSocket** with a signed link | A call needs sound flowing both ways without interruption. The signed link keeps the API key on the server. |
+| Voice agent | **Gemini Flash** inside ElevenLabs | Fast replies, which matters in a call. |
+| E-mail | **SMTP** | Standard, and nothing is sent until a recruiter approves it. |
+| Packaging | **Docker**, one image | The same image runs on my machine and in production. It starts Next.js and Flask together. |
+| Hosting | **Modal** | Always on, HTTPS included (the microphone needs it), deployed with one command. |
+| Tests | **pytest** and **GitHub Actions** | The tests need no API key and no internet, and run on every push. |
+| Costs | **One line per AI call** | Each call is recorded with its cost, which gives the cost per CV and a forecast. |
 
 ```
 Browser ──► Next.js ──/api──► Flask ──► Claude, ElevenLabs, SMTP
