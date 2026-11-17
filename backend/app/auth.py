@@ -9,7 +9,7 @@ from .web import HTTPException, parse
 
 bp = Blueprint("auth", __name__, url_prefix="/api")
 _ser = URLSafeTimedSerializer(settings.secret_key, salt="recruiter")
-COOKIE = "orvane_session"
+COOKIE = "rh_session"
 MAX_AGE = 60 * 60 * 24 * 7
 
 

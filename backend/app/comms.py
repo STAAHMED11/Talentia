@@ -35,7 +35,7 @@ def draft_message(db: Session, c: Candidate, kind: str) -> Message:
     d = llm.structured(
         "fast", DRAFT_SYSTEM,
         DRAFT_USER.format(kind=kind, language="English" if lang == "en" else "français", first_name=name[0].title() if name else "",
-                          job=c.job.title, link=link or "-", expires=expires or "-", strengths="; ".join(strengths) or "-", gaps="; ".join(gaps) or "-"),
+                          company=settings.company_name or "-", job=c.job.title, link=link or "-", expires=expires or "-", strengths="; ".join(strengths) or "-", gaps="; ".join(gaps) or "-"),
         Draft, max_tokens=900, usage={"job_id": c.job_id, "candidate_id": c.id, "purpose": f"draft_{kind}"},
     )
     body = d.body.strip()

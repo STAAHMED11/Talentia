@@ -17,14 +17,14 @@ from backend.app.prompts import AGENT_PROMPT_TEMPLATE  # noqa: E402
 API = "https://api.elevenlabs.io/v1/convai/agents"
 FIRST = "{{first_message}}"
 PLACEHOLDERS = {
-    "job_title": "Responsable d'entrepôt logistique", "candidate_first_name": "", "language_name": "français",
-    "plan": "1. Présentez-vous.", "first_message": "Bonjour, je suis Camille, l'assistante IA du recrutement du Groupe Orvane.",
+    "job_title": "le poste", "candidate_first_name": "", "language_name": "français", "recruiting_team": "l'équipe de recrutement",
+    "plan": "1. Présentez-vous.", "first_message": "Bonjour, je suis Camille, l'assistante IA de l'équipe de recrutement.",
 }
 
 
 def build(voice: str, llm: str, tts_model: str, stability: float = 0.5, speed: float = 1.0) -> dict:
     return {
-        "name": "Camille — pré-entretien Orvane",
+        "name": "Camille — pré-entretien",
         "conversation_config": {
             "agent": {
                 "first_message": FIRST,

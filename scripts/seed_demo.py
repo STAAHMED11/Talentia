@@ -1,4 +1,4 @@
-"""Create the demo job from Sylvie's job post and screen the 6 given CVs (real LLM calls, ~30 s).
+"""Create the demo job from the sample job post and screen the 6 sample CVs (real LLM calls, ~30 s).
     .venv/bin/python scripts/seed_demo.py
 """
 import sys

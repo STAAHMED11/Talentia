@@ -3,7 +3,7 @@ import { UIProvider } from '../lib/ui'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Orvane · Recrutement',
+  title: 'Recrutement',
   icons: { icon: '/favicon.svg' },
 }
 

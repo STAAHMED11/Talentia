@@ -24,6 +24,7 @@ from ..prompts import (
 from ..schemas import InterviewPlan, Synthesis
 from ..screening.triage import KIND_WEIGHT  # same must/nice weights as the CV score
 from ..screening.verify import verify_quote
+from ..util import recruiting_team
 
 log = logging.getLogger("interview")
 
@@ -154,9 +155,9 @@ def plan_text(plan: dict) -> str:
 
 def first_message(name: str, lang: str) -> str:
     if lang == "en":
-        return (f"Hi{' ' + name if name else ''}, this is Camille, the AI assistant for Orvane's recruiting team. "
+        return (f"Hi{' ' + name if name else ''}, this is Camille, the AI assistant for {recruiting_team('en')}. "
                 "We'll chat for about ten minutes. It's recorded, and a recruiter will read it and make the decision. Is now a good time?")
-    return (f"Bonjour{' ' + name if name else ''}, ici Camille, l'assistante IA du recrutement d'Orvane. "
+    return (f"Bonjour{' ' + name if name else ''}, ici Camille, l'assistante IA de {recruiting_team('fr')}. "
             "On va échanger une dizaine de minutes. C'est enregistré, et c'est un recruteur qui lira l'échange et décidera. Ça vous va, c'est un bon moment ?")
 
 
@@ -166,6 +167,7 @@ def agent_variables(c: Candidate, iv: Interview) -> dict:
         "job_title": c.job.title,
         "candidate_first_name": first_name(c) or ("vous" if iv.language == "fr" else "there"),
         "language_name": LANG_NAMES.get(iv.language, "français"),
+        "recruiting_team": recruiting_team("fr"),
         "plan": plan_text(iv.plan),
     }
 

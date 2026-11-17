@@ -99,6 +99,11 @@ def create_app(testing: bool = False) -> Flask:
         log.exception("Unhandled error on %s %s", request.method, request.path)
         return jsonify({"detail": f"Erreur serveur ({type(e).__name__}): {str(e)[:200]}"}), 500
 
+    @app.get("/api/brand")
+    def brand():
+        """Public: the company name shown in the UI (empty when COMPANY_NAME is not set)."""
+        return {"company": settings.company_name}
+
     @app.get("/api/health")
     def health():
         from .screening.triage import MAYBE_AT, YES_AT

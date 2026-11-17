@@ -87,7 +87,7 @@ def test_candidate_history_replaces_the_audit_page(client):
     jid, (a, b) = _seed()
     db = SessionLocal()
     log_event(db, "IA", "cv_screened", "candidate", a, triage="yes", score=0.9)
-    log_event(db, "Sylvie", "decision_override", "candidate", a, decision="accept", comment="atypique")
+    log_event(db, "Recruteur", "decision_override", "candidate", a, decision="accept", comment="atypique")
     log_event(db, "candidat", "interview_ended", "candidate", a, mode="voice")
     log_event(db, "IA", "cv_screened", "candidate", b, triage="no", score=0.1)   # another candidate: must not leak
     db.close()

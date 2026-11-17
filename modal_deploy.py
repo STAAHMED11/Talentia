@@ -2,9 +2,9 @@
 Next.js UI on :3000 (public) + Flask API on :8000 (internal, reached through Next's /api proxy). SQLite => single writer.
 
     pip install modal && modal setup
-    modal secret create orvane-secrets --from-dotenv .env
-    modal deploy modal_deploy.py        # prints the URL, e.g. https://<workspace>--orvane-rh.us-east.modal.run
-    (then put that exact URL in PUBLIC_URL: modal secret create orvane-secrets --from-dotenv .env PUBLIC_URL=<url> --force, and redeploy)
+    modal secret create rh-secrets --from-dotenv .env
+    modal deploy modal_deploy.py        # prints the URL, e.g. https://<workspace>--rh-tool.us-east.modal.run
+    (then put that exact URL in PUBLIC_URL: modal secret create rh-secrets --from-dotenv .env PUBLIC_URL=<url> --force, and redeploy)
 """
 import subprocess
 import threading
@@ -12,8 +12,8 @@ import time
 
 import modal
 
-app = modal.App("orvane-rh")
-data_vol = modal.Volume.from_name("orvane-data", create_if_missing=True)
+app = modal.App("rh-tool")
+data_vol = modal.Volume.from_name("rh-data", create_if_missing=True)
 
 # Built from the Dockerfile (Next.js standalone build + Python deps); .dockerignore keeps node_modules, .env, data out.
 image = modal.Image.from_dockerfile("Dockerfile").env({"DB_JOURNAL": "DELETE"})  # network volume: no WAL
@@ -24,14 +24,14 @@ image = modal.Image.from_dockerfile("Dockerfile").env({"DB_JOURNAL": "DELETE"}) 
     cpu=2.0,
     memory=2048,
     volumes={"/data": data_vol},
-    secrets=[modal.Secret.from_name("orvane-secrets")],
+    secrets=[modal.Secret.from_name("rh-secrets")],
     timeout=1800,
     min_containers=1,        # always warm: no cold start during the demo
     max_containers=1,        # SQLite => exactly one writer
     scaledown_window=1800,
 )
 @modal.concurrent(max_inputs=64)
-@modal.web_server(3000, startup_timeout=120, label="orvane-rh")
+@modal.web_server(3000, startup_timeout=120, label="rh-tool")
 def web():
     subprocess.Popen(["/app/start.sh"])  # gunicorn (Flask) + node server.js (Next.js)
 

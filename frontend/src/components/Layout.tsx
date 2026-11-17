@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { api } from '../api'
+import { useCompany } from '../lib/brand'
 import { Avatar } from './ui'
 
 const I = (d: string) => (
@@ -49,6 +50,7 @@ function TopLink({ to, children }: { to: string; children: ReactNode }) {
 
 export default function Layout({ user, children }: { user: string; children: ReactNode }) {
   const pathname = usePathname()
+  const company = useCompany()
   const job = pathname.match(/^\/(?:jobs|costs)\/(\d+)/)?.[1]
   // Full reload: the auth gate in the (recruiter) layout re-checks the session and shows the login screen.
   const logout = async () => { await api('/logout', { method: 'POST' }); window.location.assign('/jobs') }
@@ -58,7 +60,7 @@ export default function Layout({ user, children }: { user: string; children: Rea
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-[#08293a] px-3 py-5 lg:flex">
         <Link href="/jobs" className="mb-7 flex items-center gap-3 px-2 text-white">
           <Mark />
-          <span className="leading-none"><span className="font-display block text-2xl font-semibold tracking-wide">Orvane</span><span className="text-xs text-white/60">Recrutement</span></span>
+          <span className="leading-none"><span className="font-display block text-2xl font-semibold tracking-wide">{company || 'Recrutement'}</span>{company && <span className="text-xs text-white/60">Recrutement</span>}</span>
         </Link>
         <nav className="space-y-1">
           <Item to="/jobs" end icon={ICON.jobs}>Offres</Item>
@@ -82,7 +84,7 @@ export default function Layout({ user, children }: { user: string; children: Rea
       </aside>
 
       <header className="sticky top-0 z-20 flex items-center gap-4 bg-[#08293a] px-4 py-3 text-white lg:hidden">
-        <Link href="/jobs" className="flex items-center gap-2"><Mark /><span className="font-display text-xl font-semibold">Orvane</span></Link>
+        <Link href="/jobs" className="flex items-center gap-2"><Mark /><span className="font-display text-xl font-semibold">{company || 'Recrutement'}</span></Link>
         <nav className="ml-2 flex gap-1 text-sm">
           <TopLink to="/jobs">Offres</TopLink>
         </nav>

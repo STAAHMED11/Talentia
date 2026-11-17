@@ -20,7 +20,8 @@ class Settings:
     elevenlabs_api_key = _env("ELEVENLABS_API_KEY")
     elevenlabs_agent_id = _env("ELEVENLABS_AGENT_ID")
 
-    app_password = _env("APP_PASSWORD", "orvane")
+    company_name = _env("COMPANY_NAME").strip()  # optional: shown in the UI, e-mails and interview texts (white label)
+    app_password = _env("APP_PASSWORD", "change-me")
     secret_key = _env("SECRET_KEY", "dev-secret-change-me")
     public_url = _env("PUBLIC_URL", "http://localhost:3000").rstrip("/")
 
@@ -32,7 +33,7 @@ class Settings:
     smtp_port = int(_env("SMTP_PORT", "587"))
     smtp_user = _env("SMTP_USER")
     smtp_password = _env("SMTP_PASSWORD")
-    smtp_from = _env("SMTP_FROM")  # e.g. "Recrutement Orvane <recrutement@orvane.fr>"
+    smtp_from = _env("SMTP_FROM")  # e.g. "Recrutement Acme <recrutement@acme.example>"
     smtp_tls = _env("SMTP_TLS", "1") != "0"  # STARTTLS on 587 (port 465 uses SSL automatically)
 
     db_journal = _env("DB_JOURNAL", "WAL").upper()

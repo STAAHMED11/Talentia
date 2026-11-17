@@ -1,11 +1,12 @@
-# RH du futur (Groupe Orvane)
+# RH tool: AI CV screening and pre-interview
 
-My answer to the "La RH du futur" test.
+A white-label recruiting assistant. Set `COMPANY_NAME` to put your company in the screens and e-mails.
 
-Sylvie's recruiters get about 1,500 CVs per job offer. This app reads the CVs for them, runs a first interview with
+*En bref : l'application lit les CV, les trie avec une preuve pour chaque verdict, fait passer un pré-entretien
+(voix ou écrit) et donne une synthèse au recruteur, qui prend toutes les décisions. Le reste de ce document est en anglais.*
+
+A popular job offer can receive more than 1,500 CVs. This app reads the CVs for the recruiters, runs a first interview with
 the candidates who match, and gives the recruiter a short summary. The recruiter makes every final decision.
-
-**Try it:** https://sta-ahmed09--orvane-rh.us-east.modal.run (the password is sent separately)
 
 ## What you can do in the app
 
@@ -36,15 +37,15 @@ checked by the code.
 
 ## Choices I made, and why
 
-- **A quote for every verdict.** Sylvie's managers complained that they did not know why a profile was kept.
+- **A quote for every verdict.** Hiring managers often do not know why a profile was kept.
   It also stops the AI from inventing things.
 - **The AI never gives a score.** A score from a model changes from one run to the next and cannot be explained.
   A formula in code gives the same result every time and can be tested.
-- **Cheating is handled.** One of the test CVs hides a message telling the AI to give the maximum score.
+- **Cheating is handled.** One of the sample CVs hides a message telling the AI to give the maximum score.
   That text is removed before the evaluation, the attempt is shown to the recruiter, and since the AI has no
   score to give, the message has nothing to change.
 - **"Not mentioned" is not "failed".** A CV that says nothing about a criterion loses a few points but is not
-  eliminated. Sylvie said she prefers a few false positives over missing a good profile.
+  eliminated. Missing a good profile costs more than reading one extra CV, so the rules lean towards false positives.
 - **A failed required criterion does not reject the candidate.** It sends them to *à examiner*. Example: Ana has
   the experience but writes "French B1". She is not refused; the interview asks her a question in French.
 - **Nothing is sent or decided without a recruiter.** If the recruiter disagrees with the AI's proposal,
@@ -73,7 +74,7 @@ checked by the code.
 | E-mail | **SMTP** | Standard, and nothing is sent until a recruiter approves it. |
 | Packaging | **Docker**, one image | The same image runs on my machine and in production. It starts Next.js and Flask together. |
 | Hosting | **Modal** | Always on, HTTPS included (the microphone needs it), deployed with one command. |
-| Tests | **pytest** and **GitHub Actions** | The tests need no API key and no internet, and run on every push. |
+| Tests | **pytest** and **GitHub Actions** | The tests need no API key and no internet. A workflow is configured to run them on every push. |
 | Costs | **One line per AI call** | Each call is recorded with its cost, which gives the cost per CV and a forecast. |
 
 ```
@@ -91,26 +92,65 @@ The code is in two folders:
 ## Run it on your machine
 
 ```bash
-cp .env.example .env      # add ANTHROPIC_API_KEY, APP_PASSWORD and SECRET_KEY
+cp .env.example .env      # add ANTHROPIC_API_KEY, APP_PASSWORD, SECRET_KEY (and COMPANY_NAME if you want one)
 docker compose up -d --build
 ```
 
 Then open http://localhost:3000. Without ElevenLabs keys the interview works in text mode. Without SMTP
 settings the e-mails are not really sent (the app says so).
 
+**Demo data.** `fixtures/` holds a sample job post and 6 sample CVs. You can upload them by hand, or create
+the offer and screen the 6 CVs in one go (real AI calls, needs the Python setup from the Tests section below):
+
+```bash
+.venv/bin/python scripts/seed_demo.py
+```
+
+**Voice interview.** Add `ELEVENLABS_API_KEY` to `.env`, then create the voice agent once. The script writes
+`ELEVENLABS_AGENT_ID` into `.env`:
+
+```bash
+.venv/bin/python scripts/setup_agent.py
+```
+
+## Deploy
+
+The online version runs on Modal, from the same Dockerfile:
+
+```bash
+pip install modal && modal setup
+modal secret create rh-secrets --from-dotenv .env
+modal deploy modal_deploy.py      # prints the URL of the app
+```
+
+Then put that URL in `PUBLIC_URL` (it is used in the interview links), update the secret and deploy again.
+
 ## Tests
 
 ```bash
-pip install -r requirements-dev.txt
+python -m venv .venv
+.venv/bin/pip install -r requirements-dev.txt
+(cd frontend && npm ci)
 scripts/check.sh
 ```
 
-This runs the linters, 57 tests and the frontend build. GitHub Actions runs the same script on every push. The tests need no API key and no internet. They cover the
+This runs the linters, 63 tests and the frontend build. The GitHub Actions workflow (`.github/workflows/ci.yml`)
+is configured to run the same checks on every push. The tests need no API key and no internet. They cover the
 score, the quote check, the anonymization, the cheating detection, the decisions, the e-mails and a complete
 journey from the offer to the final e-mail.
 
-`evals/` holds a second kind of test that uses the real AI: the 6 CVs of the test and 8 trap CVs I made
+`evals/` holds a second kind of test that uses the real AI: the 6 sample CVs and 8 trap CVs
 (scan, hidden message, a cooking recipe, an empty file...), each with the result I expect.
+
+```bash
+.venv/bin/python -m evals.run_eval              # the 6 sample CVs
+.venv/bin/python -m evals.run_eval --surprise   # the 8 trap CVs
+```
+
+## How I used an AI assistant
+
+I built this with Claude Code. I gave it precise instructions and checked its work with the tests. I also ran a
+critical review of the code, which found bugs that I then fixed.
 
 ## What is missing
 
@@ -123,5 +163,5 @@ This is a pilot, not a finished product. Before giving it to the six recruiters 
 - **Anonymization.** French job titles still show gender ("Cheffe", "Adjointe").
 - **Personal data.** No retention period or deletion on request yet, and the hosting is in the US.
 - **Reminders.** A candidate who does not take the interview gets no reminder.
-- **Automatic deploy.** GitHub Actions runs the checks on every push (`.github/workflows/ci.yml`), but I still
+- **Automatic deploy.** The checks are automated (`scripts/check.sh` and the GitHub Actions workflow), but I still
   deploy by hand. The deploy should start by itself once the checks pass.

@@ -5,7 +5,7 @@ services:
     env_file: .env
     environment:
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost:3000}
-    volumes: ["orvane-data:/data"]
+    volumes: ["rh-data:/data"]
     restart: unless-stopped
 volumes:
-  orvane-data:
+  rh-data:

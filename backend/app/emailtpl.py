@@ -2,6 +2,8 @@
 import html
 import re
 
+from .config import settings
+
 BRAND, INK, MUTED, LINE = "#0B4F6C", "#0F1B24", "#5B6770", "#DADDD6"
 _URL = re.compile(r"(https?://[^\s<]+)")
 
@@ -17,8 +19,14 @@ def _paragraphs(text: str) -> str:
 
 def build_html(body: str, *, cta_label: str | None = None, cta_url: str | None = None, note: str | None = None,
                lang: str = "fr") -> str:
-    footer = ("You are receiving this message because you applied to a position at Groupe Orvane."
-              if lang == "en" else "Vous recevez ce message car vous avez candidaté à un poste au Groupe Orvane.")
+    company = settings.company_name
+    if lang == "en":
+        footer = f"You are receiving this message because you applied to a position at {company}." if company \
+            else "You are receiving this message because you applied to a position."
+    else:
+        footer = f"Vous recevez ce message car vous avez candidaté à un poste chez {company}." if company \
+            else "Vous recevez ce message car vous avez candidaté à un poste."
+    header = f"{company} · Recrutement" if company else "Recrutement"
     button = ""
     if cta_label and cta_url:
         button = (f'<table role="presentation" cellspacing="0" cellpadding="0" style="margin:8px 0 20px"><tr><td style="background:{BRAND};border-radius:8px">'
@@ -28,7 +36,7 @@ def build_html(body: str, *, cta_label: str | None = None, cta_url: str | None =
     return f"""<!doctype html><html><body style="margin:0;background:#F2F3EF;font-family:Helvetica,Arial,sans-serif">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#F2F3EF"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" style="max-width:560px;background:#fff;border:1px solid {LINE};border-radius:12px;overflow:hidden">
-<tr><td style="background:{BRAND};padding:18px 28px;color:#fff;font-size:17px;font-weight:700;letter-spacing:.2px">Groupe Orvane · Recrutement</td></tr>
+<tr><td style="background:{BRAND};padding:18px 28px;color:#fff;font-size:17px;font-weight:700;letter-spacing:.2px">{html.escape(header)}</td></tr>
 <tr><td style="padding:28px 28px 8px">{_paragraphs(body)}{button}{note_html}</td></tr>
 <tr><td style="padding:16px 28px 24px;border-top:1px solid {LINE};color:{MUTED};font-size:12px;line-height:1.5">{html.escape(footer)}</td></tr>
 </table></td></tr></table></body></html>"""

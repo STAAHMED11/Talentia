@@ -2,7 +2,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { api } from '../../api'
-import { T, type Lang } from '../../lib/i18n'
+import { useCompany } from '../../lib/brand'
+import { T, fill, type Lang } from '../../lib/i18n'
 import Shell from './Shell'
 
 export default function Welcome() {
@@ -13,6 +14,7 @@ export default function Welcome() {
   const [ok, setOk] = useState(false)
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
+  const company = useCompany()
 
   useEffect(() => {
     api(`/public/interview/${token}`).then(i => {
@@ -30,7 +32,7 @@ export default function Welcome() {
         <div className="m-auto text-center">
           <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full bg-amber-500/15 text-3xl ring-1 ring-amber-400/30">⏳</div>
           <h1 className="text-2xl font-semibold">{t.expired}</h1>
-          <p className="mx-auto mt-3 max-w-sm text-slate-300">{t.expiredText}</p>
+          <p className="mx-auto mt-3 max-w-sm text-slate-300">{fill(t.expiredText, lang, company)}</p>
         </div>
       </Shell>
     )
@@ -67,7 +69,7 @@ export default function Welcome() {
 
         <label className="mt-8 flex cursor-pointer gap-3 text-sm text-slate-300">
           <input type="checkbox" checked={ok} onChange={e => setOk(e.target.checked)} className="mt-1 h-4 w-4 accent-indigo-500" />
-          <span>{t.consent}</span>
+          <span>{fill(t.consent, lang, company)}</span>
         </label>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2">

@@ -8,13 +8,13 @@ export const T = {
       ['📝', 'L\'échange est enregistré et transcrit pour le recruteur. Vous pouvez l\'arrêter à tout moment.'],
       ['✉️', 'Chaque candidat reçoit une réponse de l\'équipe de recrutement.'],
     ],
-    consent: 'J\'ai compris et j\'accepte que cet échange soit enregistré, transcrit et lu par l\'équipe de recrutement du Groupe Orvane.',
+    consent: 'J\'ai compris et j\'accepte que cet échange soit enregistré, transcrit et lu par {team}.',
     voice: 'Commencer l\'entretien vocal', text: 'Répondre par écrit', micTip: 'Votre navigateur vous demandera l\'accès au micro.',
     startCall: 'Démarrer', connecting: 'Connexion…', listening: 'Camille vous écoute', speaking: 'Camille parle', thinkingVoice: 'Camille réfléchit', muted: 'Micro coupé',
     micDenied: 'Le micro est bloqué. Autorisez-le dans votre navigateur, ou répondez par écrit.',
     typeHere: 'Écrivez votre réponse…', send: 'Envoyer', end: 'Terminer', thinking: 'Camille écrit…',
-    doneTitle: 'Merci, c\'est terminé !', doneText: 'Le recruteur va lire votre échange. Vous recevrez une réponse de l\'équipe de recrutement du Groupe Orvane, quelle que soit la suite.',
-    expired: 'Ce lien a expiré.', expiredText: 'La date limite du pré-entretien est dépassée. Contactez l\'équipe de recrutement du Groupe Orvane : elle vous enverra un nouveau lien.', validUntil: 'Lien valable jusqu\'au',
+    doneTitle: 'Merci, c\'est terminé !', doneText: 'Le recruteur va lire votre échange. Vous recevrez une réponse de {team}, quelle que soit la suite.',
+    expired: 'Ce lien a expiré.', expiredText: 'La date limite du pré-entretien est dépassée. Contactez {team} : elle vous enverra un nouveau lien.', validUntil: 'Lien valable jusqu\'au',
     invalid: 'Ce lien est invalide ou a expiré.', already: 'Cet entretien est déjà terminé. Merci !',
   },
   en: {
@@ -25,13 +25,22 @@ export const T = {
       ['📝', 'The conversation is recorded and transcribed for the recruiter. You can stop at any time.'],
       ['✉️', 'Every candidate receives an answer from the recruiting team.'],
     ],
-    consent: 'I understand and agree that this conversation is recorded, transcribed and read by the Groupe Orvane recruiting team.',
+    consent: 'I understand and agree that this conversation is recorded, transcribed and read by {team}.',
     voice: 'Start the voice interview', text: 'Answer in writing', micTip: 'Your browser will ask for microphone access.',
     startCall: 'Start', connecting: 'Connecting…', listening: 'Camille is listening', speaking: 'Camille is speaking', thinkingVoice: 'Camille is thinking', muted: 'Mic muted',
     micDenied: 'The microphone is blocked. Allow it in your browser, or answer in writing.',
     typeHere: 'Type your answer…', send: 'Send', end: 'Finish', thinking: 'Camille is typing…',
-    doneTitle: 'Thank you, all done!', doneText: 'A recruiter will read your conversation. You will receive an answer from the Groupe Orvane recruiting team, whatever the outcome.',
-    expired: 'This link has expired.', expiredText: 'The deadline for this pre-interview has passed. Please contact the Groupe Orvane recruiting team: they will send you a new link.', validUntil: 'Link valid until',
+    doneTitle: 'Thank you, all done!', doneText: 'A recruiter will read your conversation. You will receive an answer from {team}, whatever the outcome.',
+    expired: 'This link has expired.', expiredText: 'The deadline for this pre-interview has passed. Please contact {team}: they will send you a new link.', validUntil: 'Link valid until',
     invalid: 'This link is invalid or has expired.', already: 'This interview is already finished. Thank you!',
   },
 } as const
+
+/** Fills the {team} placeholder: "l'équipe de recrutement d'Acme" / "the Acme recruiting team", or the plain phrase without a company. */
+export function fill(text: string, lang: Lang, company: string): string {
+  let team: string
+  if (lang === 'en') team = company ? `the ${company} recruiting team` : 'the recruiting team'
+  else if (!company) team = "l'équipe de recrutement"
+  else team = /^[aeiouyàâéèêîïôû]/i.test(company) ? `l'équipe de recrutement d'${company}` : `l'équipe de recrutement de ${company}`
+  return text.replace('{team}', team)
+}

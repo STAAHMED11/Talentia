@@ -20,7 +20,7 @@ app.config.update(TESTING=True, BACKGROUND_SYNC=True)  # background tasks run in
 @pytest.fixture()
 def client():
     with app.test_client() as c:
-        c.post("/api/login", json={"password": "pw", "name": "Sylvie"})
+        c.post("/api/login", json={"password": "pw", "name": "Recruteur"})
         yield c
 
 

@@ -43,7 +43,7 @@ class FakeSMTP:
 def test_invitation_email_has_link_and_deadline(client, monkeypatch):
     monkeypatch.setattr(llm_mod.llm, "structured", lambda *a, **k: Draft(subject="Votre pré-entretien", body="Bonjour Karim, voici votre invitation."))
     monkeypatch.setattr(settings, "smtp_host", "smtp.test")
-    monkeypatch.setattr(settings, "smtp_from", "recrutement@orvane.test")
+    monkeypatch.setattr(settings, "smtp_from", "recrutement@example.test")
     monkeypatch.setattr(mailer.smtplib, "SMTP", FakeSMTP)
     FakeSMTP.sent.clear()
     cid, token = _candidate()
