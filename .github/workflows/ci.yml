@@ -51,6 +51,6 @@ jobs:
         with:
           context: .
           push: false
-          tags: rh-tool:ci
+          tags: talentia:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max

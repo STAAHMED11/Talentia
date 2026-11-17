@@ -23,7 +23,7 @@ def test_brand_endpoint_is_public(client, monkeypatch):
 
 def test_interview_texts_follow_the_company(monkeypatch):
     monkeypatch.setattr(settings, "company_name", "")
-    assert "Orvane" not in first_message("Léa", "fr") and "l'équipe de recrutement" in first_message("Léa", "fr")
+    assert "Acme" not in first_message("Léa", "fr") and "l'équipe de recrutement" in first_message("Léa", "fr")
     monkeypatch.setattr(settings, "company_name", "Acme")
     assert "l'équipe de recrutement d'Acme" in first_message("Léa", "fr")
     assert "the Acme recruiting team" in first_message("Léa", "en")
@@ -43,7 +43,7 @@ def test_agent_variables_carry_the_team(monkeypatch):
 def test_email_header_and_footer(monkeypatch):
     monkeypatch.setattr(settings, "company_name", "")
     html_ = build_html("Bonjour")
-    assert "Orvane" not in html_ and ">Recrutement</td>" in html_ and "à un poste." in html_
+    assert "Acme" not in html_ and ">Recrutement</td>" in html_ and "à un poste." in html_
     monkeypatch.setattr(settings, "company_name", "Acme")
     html_ = build_html("Bonjour")
     assert "Acme · Recrutement" in html_ and "à un poste chez Acme." in html_

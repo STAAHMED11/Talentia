@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { api } from '../api'
-import { useCompany } from '../lib/brand'
+import { PRODUCT, useCompany } from '../lib/brand'
 
 export default function Login({ onDone }: { onDone: () => void }) {
   const [name, setName] = useState('')
@@ -23,9 +23,9 @@ export default function Login({ onDone }: { onDone: () => void }) {
           <rect x="0" y="47" width="210" height="26" rx="13" fill="#FFE45C" />
           <rect x="0" y="94" width="130" height="26" rx="13" fill="#fff" fillOpacity=".4" />
         </svg>
-        <div className="font-display text-2xl font-semibold tracking-wide">{company || 'Recrutement'}{company && <span className="text-base font-medium text-white/60"> Recrutement</span>}</div>
+        <div className="font-display text-2xl font-semibold tracking-wide">{PRODUCT}<span className="text-base font-medium text-white/60"> IA RH</span></div>
         <div className="relative max-w-lg">
-          <h1 className="font-display text-6xl font-semibold leading-[0.95]">Recrutez sur preuves.</h1>
+          <h1 className="font-display text-5xl font-semibold leading-[1.02]">L'IA RH qui prouve chaque verdict.</h1>
           <ul className="mt-8 space-y-2 text-[17px] text-white/80">
             <li>Chaque CV lu, chaque verdict cité.</li>
             <li>Un pré-entretien à toute heure.</li>
@@ -36,7 +36,7 @@ export default function Login({ onDone }: { onDone: () => void }) {
       </section>
       <section className="grid place-items-center p-6">
         <form onSubmit={submit} className="w-full max-w-sm">
-          <div className="mb-8 lg:hidden font-display text-3xl font-semibold text-brand">{company || 'Recrutement'}</div>
+          <div className="mb-8 lg:hidden font-display text-3xl font-semibold text-brand">{PRODUCT}<span className="text-lg font-medium text-muted"> IA RH</span></div>
           <h2 className="font-display text-4xl font-semibold">Connexion</h2>
           <p className="mb-6 mt-1 text-[15px] text-muted">Espace réservé aux recruteurs.</p>
           <label className="mb-1 block text-sm font-medium" htmlFor="name">Votre prénom</label>

@@ -3,7 +3,7 @@ import { UIProvider } from '../lib/ui'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Recrutement',
+  title: 'Talentia · IA RH',
   icons: { icon: '/favicon.svg' },
 }
 

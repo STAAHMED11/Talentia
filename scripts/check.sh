@@ -22,7 +22,7 @@ step "Frontend type check + production build (next build)"
 
 if [[ " $* " == *" --docker "* ]]; then
   step "Docker image"
-  docker build -q -t rh-tool:check . >/dev/null && echo "image OK"
+  docker build -q -t talentia:check . >/dev/null && echo "image OK"
 fi
 
 if [[ " $* " == *" --live "* ]]; then

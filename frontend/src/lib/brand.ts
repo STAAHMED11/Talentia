@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api'
 
+/** Product name, shown on the recruiter screens. */
+export const PRODUCT = 'Talentia'
+
 /** Company name configured on the server (COMPANY_NAME). Empty string when none: screens fall back to a neutral wording. */
 let cached: Promise<string> | null = null
 const load = () => (cached ??= api<{ company: string }>('/brand').then(b => b.company || '').catch(() => ''))

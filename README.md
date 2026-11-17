@@ -1,14 +1,18 @@
-# RH tool: AI CV screening and pre-interview
+# Talentia · IA RH
 
-A white-label recruiting assistant. Set `COMPANY_NAME` to put your company in the screens and e-mails.
+**L'IA RH qui prouve chaque verdict.** AI CV screening and pre-interview.
+
+Talentia is a white-label recruiting assistant. Set `COMPANY_NAME` to put your company in the screens and e-mails.
 
 *En bref : l'application lit les CV, les trie avec une preuve pour chaque verdict, fait passer un pré-entretien
 (voix ou écrit) et donne une synthèse au recruteur, qui prend toutes les décisions. Le reste de ce document est en anglais.*
 
-A popular job offer can receive more than 1,500 CVs. This app reads the CVs for the recruiters, runs a first interview with
+A popular job offer can receive more than 1,500 CVs. Talentia reads the CVs for the recruiters, runs a first interview with
 the candidates who match, and gives the recruiter a short summary. The recruiter makes every final decision.
 
-## What you can do in the app
+**Try it:** https://sta-ahmed09--talentia.us-east.modal.run (the password is sent separately)
+
+## What you can do in Talentia
 
 1. **Create an offer.** Paste the job post. The app turns it into a list of criteria that you can edit.
 2. **Upload CVs** (PDF, Word, image or scan). After about 30 seconds each CV is sorted into one of three groups:
@@ -119,7 +123,7 @@ The online version runs on Modal, from the same Dockerfile:
 
 ```bash
 pip install modal && modal setup
-modal secret create rh-secrets --from-dotenv .env
+modal secret create talentia-secrets --from-dotenv .env
 modal deploy modal_deploy.py      # prints the URL of the app
 ```
 
